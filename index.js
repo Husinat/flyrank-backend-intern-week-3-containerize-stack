@@ -107,6 +107,75 @@ app.post("/tasks", (req, res) => {
 
 
 
+// STAGE 4 AND 5
+// UPDATE & DELETE TASKS
+
+// Update task
+app.put("/tasks/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const task = tasks.find((task) => task.id === id);
+
+  if (!task) {
+    return res.status(404).json({
+      error: `Task ${id} not found`
+    });
+  }
+
+  const { title, done } = req.body;
+
+  if (
+    (title !== undefined && title.trim() === "") ||
+    (title === undefined && done === undefined)
+  ) {
+    return res.status(400).json({
+      error: "Provide a valid title and/or done status"
+    });
+  }
+
+  if (title !== undefined) {
+    task.title = title;
+  }
+
+  if (done !== undefined) {
+    task.done = done;
+  }
+
+  res.json(task);
+});
+
+
+// Delete task
+app.delete("/tasks/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const index = tasks.findIndex((task) => task.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({
+      error: `Task ${id} not found`
+    });
+  }
+
+  tasks.splice(index, 1);
+
+  res.status(204).send();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.listen(PORT, () => {
