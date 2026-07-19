@@ -25,7 +25,7 @@ A simple RESTful CRUD API built with Node.js and Express as part of the FlyRank 
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Husinat/flyrank-backend-intern-week-2-crud-api-.git
 ```
 
 Navigate into the project:
