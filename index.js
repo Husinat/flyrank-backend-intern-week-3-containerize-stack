@@ -1,6 +1,7 @@
 const express = require('express');
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./openapi.json");
+const db = require("./database/db");
 
 const app = express();
 
@@ -8,20 +9,9 @@ app.use(express.json());
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
-
-const PORT = 8000;
-
+const PORT = 5000;
 
 // STAGE 0 
-app.get('/', (req, res) => {
-    res.send('Hello World');
-})
-
-
-
-
-
-// STAGE 1
 app.get("/", (req, res) => {
     res.json({
         name: "Task API",
@@ -29,15 +19,6 @@ app.get("/", (req, res) => {
         endpoints: ["/tasks"]
     });
 });
-
-app.get("/health", (req, res) => {
-    res.json({
-        status: "ok"
-    });
-});
-
-
-
 
 
 // STAGE 2
@@ -83,8 +64,6 @@ app.get("/tasks/:id", (req, res) => {
 
 
 
-
-
 // STAGE 3
 // posting a new task route
 app.post("/tasks", (req, res) => {
@@ -106,11 +85,6 @@ app.post("/tasks", (req, res) => {
 
   res.status(201).json(newTask);
 });
-
-
-
-
-
 
 
 // STAGE 4 AND 5
@@ -167,15 +141,6 @@ app.delete("/tasks/:id", (req, res) => {
 
   res.status(204).send();
 });
-
-
-
-
-
-
-
-
-
 
 
 

@@ -57,13 +57,13 @@ npm start
 The server runs on:
 
 ```
-http://localhost:8000
+http://localhost:5000
 ```
 
 Swagger documentation:
 
 ```
-http://localhost:8000/docs
+http://localhost:5000/docs
 ```
 
 The following endpoints are available:
@@ -83,7 +83,7 @@ The following endpoints are available:
 ## Example Request
 
 ```bash
-curl -i http://localhost:8000/tasks
+curl -i http://localhost:5000/tasks
 ```
 
 Example response:
@@ -105,7 +105,7 @@ The API includes interactive documentation powered by Swagger UI.
 Open:
 
 ```
-http://localhost:8000/docs
+http://localhost:5000/docs
 ```
 
 and use the **Try it out** button to test every endpoint.
