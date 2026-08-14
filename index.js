@@ -22,43 +22,35 @@ app.get("/", (req, res) => {
 
 
 // STAGE 2
-const tasks = [
-    {
-        id: 1,
-        title: "Learn Express",
-        done: true
-    },
-    {
-        id: 2,
-        title: "Build CRUD API",
-        done: false
-    },
-    {
-        id: 3,
-        title: "Submit Week 2 Assignment",
-        done: false
-    }
-];
+
+
+
+
+
 
 // get tasks routes
 app.get("/tasks", (req, res) => {
+    const tasks = db.prepare("SELECT * FROM tasks").all();
+
     res.json(tasks);
 });
 
 
 // get task by id route
 app.get("/tasks/:id", (req, res) => {
-  const id = Number(req.params.id);
+    const id = Number(req.params.id);
 
-  const task = tasks.find((task) => task.id === id);
+    const task = db
+        .prepare("SELECT * FROM tasks WHERE id = ?")
+        .get(id);
 
-  if (!task) {
-    return res.status(404).json({
-      error: `Task ${id} not found`
-    });
-  }
+    if (!task) {
+        return res.status(404).json({
+            error: `Task ${id} not found`
+        });
+    }
 
-  res.json(task);
+    res.json(task);
 });
 
 
