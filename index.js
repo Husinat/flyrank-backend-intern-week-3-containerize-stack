@@ -59,24 +59,28 @@ app.get("/tasks/:id", (req, res) => {
 // STAGE 3
 // posting a new task route
 app.post("/tasks", (req, res) => {
-  const { title } = req.body;
+    const { title } = req.body;
 
-  if (!title || title.trim() === "") {
-    return res.status(400).json({
-      error: "Title is required"
-    });
-  }
+    if (!title || title.trim() === "") {
+        return res.status(400).json({
+            error: "Title is required"
+        });
+    }
 
-  const newTask = {
-    id: tasks.length + 1,
-    title,
-    done: false
-  };
+    const result = db
+        .prepare("INSERT INTO tasks (title, done) VALUES (?, ?)")
+        .run(title, 0);
 
-  tasks.push(newTask);
+    const newTask = db
+        .prepare("SELECT * FROM tasks WHERE id = ?")
+        .get(result.lastInsertRowid);
 
-  res.status(201).json(newTask);
+    res.status(201).json(newTask);
 });
+
+
+
+
 
 
 // STAGE 4 AND 5
