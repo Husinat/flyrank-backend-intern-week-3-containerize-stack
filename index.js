@@ -1,17 +1,18 @@
-const express = require('express');
+require("dotenv").config();
+
+const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./openapi.json");
-const db = require("./database/db");
+const taskRepository = require("./database/taskRepository");
 
 const app = express();
 
 app.use(express.json());
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+const PORT = process.env.PORT || 5000;
 
-const PORT = 5000;
-
-// STAGE 0 
+// Home
 app.get("/", (req, res) => {
     res.json({
         name: "Task API",
@@ -20,29 +21,17 @@ app.get("/", (req, res) => {
     });
 });
 
-
-// STAGE 2
-
-
-
-
-
-
-// get tasks routes
-app.get("/tasks", (req, res) => {
-    const tasks = db.prepare("SELECT * FROM tasks").all();
-
+// Get all tasks
+app.get("/tasks", async (req, res) => {
+    const tasks = await taskRepository.getAll();
     res.json(tasks);
 });
 
-
-// get task by id route
-app.get("/tasks/:id", (req, res) => {
+// Get task by ID
+app.get("/tasks/:id", async (req, res) => {
     const id = Number(req.params.id);
 
-    const task = db
-        .prepare("SELECT * FROM tasks WHERE id = ?")
-        .get(id);
+    const task = await taskRepository.getById(id);
 
     if (!task) {
         return res.status(404).json({
@@ -53,12 +42,8 @@ app.get("/tasks/:id", (req, res) => {
     res.json(task);
 });
 
-
-
-
-// STAGE 3
-// posting a new task route
-app.post("/tasks", (req, res) => {
+// Create a task
+app.post("/tasks", async (req, res) => {
     const { title } = req.body;
 
     if (!title || title.trim() === "") {
@@ -67,33 +52,17 @@ app.post("/tasks", (req, res) => {
         });
     }
 
-    const result = db
-        .prepare("INSERT INTO tasks (title, done) VALUES (?, ?)")
-        .run(title, 0);
-
-    const newTask = db
-        .prepare("SELECT * FROM tasks WHERE id = ?")
-        .get(result.lastInsertRowid);
+    const newTask = await taskRepository.create(title);
 
     res.status(201).json(newTask);
 });
 
-
-
-
-
-
-// STAGE 4 AND 5
-// UPDATE & DELETE TASKS
-
-// Update task
-app.put("/tasks/:id", (req, res) => {
+// Update a task
+app.put("/tasks/:id", async (req, res) => {
     const id = Number(req.params.id);
     const { title, done } = req.body;
 
-    const existingTask = db
-        .prepare("SELECT * FROM tasks WHERE id = ?")
-        .get(id);
+    const existingTask = await taskRepository.getById(id);
 
     if (!existingTask) {
         return res.status(404).json({
@@ -102,7 +71,8 @@ app.put("/tasks/:id", (req, res) => {
     }
 
     if (
-        (title !== undefined && (typeof title !== "string" || title.trim() === "")) ||
+        (title !== undefined &&
+            (typeof title !== "string" || title.trim() === "")) ||
         (done !== undefined && typeof done !== "boolean") ||
         (title === undefined && done === undefined)
     ) {
@@ -111,33 +81,26 @@ app.put("/tasks/:id", (req, res) => {
         });
     }
 
-    const updatedTitle = title !== undefined ? title : existingTask.title;
-    const updatedDone = done !== undefined ? (done ? 1 : 0) : existingTask.done;
+    const updatedTitle =
+        title !== undefined ? title : existingTask.title;
 
-    db.prepare(`
-        UPDATE tasks
-        SET title = ?, done = ?
-        WHERE id = ?
-    `).run(updatedTitle, updatedDone, id);
+    const updatedDone =
+        done !== undefined ? done : existingTask.done;
 
-    const updatedTask = db
-        .prepare("SELECT * FROM tasks WHERE id = ?")
-        .get(id);
+    const updatedTask = await taskRepository.update(
+        id,
+        updatedTitle,
+        updatedDone
+    );
 
     res.json(updatedTask);
 });
 
-
-
-
-
-// Delete task
-app.delete("/tasks/:id", (req, res) => {
+// Delete a task
+app.delete("/tasks/:id", async (req, res) => {
     const id = Number(req.params.id);
 
-    const existingTask = db
-        .prepare("SELECT * FROM tasks WHERE id = ?")
-        .get(id);
+    const existingTask = await taskRepository.getById(id);
 
     if (!existingTask) {
         return res.status(404).json({
@@ -145,18 +108,11 @@ app.delete("/tasks/:id", (req, res) => {
         });
     }
 
-    db.prepare("DELETE FROM tasks WHERE id = ?").run(id);
+    await taskRepository.remove(id);
 
     res.status(204).send();
 });
 
-
-
-
-
-
-
-
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
-})
+    console.log(`Server is running on port ${PORT}`);
+});

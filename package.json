@@ -1,5 +1,5 @@
 {
-  "name": "week-02-crud-api",
+  "name": "week-3-containerize-stack",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,8 +12,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "better-sqlite3": "^13.0.2",
+    "dotenv": "^18.0.4",
     "express": "^5.2.1",
+    "pg": "^8.23.0",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
