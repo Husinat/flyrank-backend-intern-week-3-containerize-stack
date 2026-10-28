@@ -139,3 +139,17 @@ docker compose down
 ```
 
 This stops and removes the containers while preserving the named database volume.
+
+## Screenshots
+
+### Docker Containers
+
+The application and PostgreSQL database running in Docker Desktop.
+
+![Docker containers running](Images/docker%20container.png)
+
+### API Documentation
+
+Swagger UI documentation for exploring and testing the Task API.
+
+![Swagger UI API documentation](Images%20Swaggerdocs.png)
