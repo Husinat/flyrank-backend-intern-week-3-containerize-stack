@@ -144,12 +144,8 @@ This stops and removes the containers while preserving the named database volume
 
 ### Docker Containers
 
-The application and PostgreSQL database running in Docker Desktop.
-
 ![Docker containers running](./images/docker%20container.png)
 
 ### API Documentation
-
-Swagger UI documentation for exploring and testing the Task API.
 
 ![Swagger UI API documentation](./images/Swagger%20docs.png)
